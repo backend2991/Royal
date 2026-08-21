@@ -21,9 +21,9 @@ ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1
 # Render HTTPS xavfsizligi va CSRF uchun
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
+    "https://royal-dyg5.onrender.com",
     "http://127.0.0.1",
     "http://localhost",
-    ".onrender.com",
 ]
 
 INSTALLED_APPS = [
