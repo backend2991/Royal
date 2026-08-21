@@ -16,7 +16,18 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-key-for-local-dev-only")
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",") if h.strip()]
+# Environment variable bo'lsa ham, bo'lmasa ham Render domeniga ruxsat berildi
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "royal-dyg5.onrender.com",
+    ".onrender.com",
+]
+
+# Qo'shimcha dinamik HOST qo'shish imkoniyati (agar .env ishlatilsa)
+env_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "")
+if env_hosts:
+    ALLOWED_HOSTS.extend([h.strip() for h in env_hosts.split(",") if h.strip()])
 
 # Render HTTPS xavfsizligi va CSRF uchun
 CSRF_TRUSTED_ORIGINS = [
@@ -46,7 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # <--- WhiteNoise qo'shildi (Statika uchun)
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Statika uchun WhiteNoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -61,7 +72,7 @@ ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",  # <-- backend nomi to'liq va kichik harflar bilan yozilishi shart
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -149,6 +160,9 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_BOT_USERNAME = os.getenv("TELEGRAM_BOT_USERNAME", "")
 TELEGRAM_WEBHOOK_SECRET = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
 TELEGRAM_API_BASE = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
+
+# Dynamic Site URL (Local va Production uchun)
+SITE_URL = os.getenv("SITE_URL", "https://royal-dyg5.onrender.com")
 
 # ---------------------------------------------------------------------------
 # Geo-Verification & anti-remote-ordering
