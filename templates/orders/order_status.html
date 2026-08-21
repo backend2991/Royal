@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+{% block title %}{% trans "Order status" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center">
+  <h1 class="text-2xl font-bold mb-2">{% trans "Thank you!" %}</h1>
+  <p class="text-gray-500 dark:text-gray-400 mb-8">
+    {% blocktrans with table=order.table.number %}Table {{ table }} · Order #{{ order.id }}{% endblocktrans %}
+  </p>
+
+  <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+    <span>{% trans "Pending" %}</span>
+    <span>{% trans "Accepted" %}</span>
+    <span>{% trans "In Kitchen" %}</span>
+    <span>{% trans "Ready" %}</span>
+    <span>{% trans "Delivered" %}</span>
+  </div>
+  <div class="h-2 rounded-full status-track-line mb-6" id="progress-bar" style="--progress: 10%"></div>
+
+  <div id="status-badge" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-brand-50 dark:bg-brand-700/20 text-brand-700 dark:text-brand-400 font-semibold text-lg mb-8">
+    <span class="w-2.5 h-2.5 rounded-full bg-brand-600 pulse-dot"></span>
+    <span id="status-text">{{ order.get_status_display }}</span>
+  </div>
+
+  <div class="text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="font-semibold mb-2">{% trans "Order items" %}</h2>
+    <ul class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
+      {% for item in order.items.all %}
+      <li class="flex justify-between py-1.5">
+        <span>{{ item.quantity }}× {{ item.menu_item.name }}</span>
+        <span>{{ item.subtotal|intcomma }} UZS</span>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="flex justify-between mt-3 font-semibold">
+      <span>{% trans "Total" %}</span>
+      <span>{{ order.total_amount|intcomma }} UZS</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const STATUS_ORDER = ["pending", "accepted", "in_kitchen", "ready", "delivered"];
+const STATUS_URL = "{% url 'orders:status_json' order.order_uid %}";
+const STREAM_URL = "{% url 'orders:status_stream' order.order_uid %}";
+
+function applyStatus(status, statusDisplay) {
+  document.getElementById("status-text").textContent = statusDisplay;
+  const idx = STATUS_ORDER.indexOf(status);
+  const pct = idx >= 0 ? ((idx + 1) / STATUS_ORDER.length) * 100 : 10;
+  document.getElementById("progress-bar").style.setProperty("--progress", pct + "%");
+  if (status === "delivered" || status === "cancelled") {
+    document.getElementById("status-badge").querySelector(".pulse-dot").classList.remove("pulse-dot");
+  }
+}
+
+// Prefer Server-Sent Events; fall back to polling every 4s if unsupported
+// or if the connection drops.
+if (typeof EventSource !== "undefined") {
+  const source = new EventSource(STREAM_URL);
+  source.addEventListener("status", (e) => {
+    const data = JSON.parse(e.data);
+    applyStatus(data.status, data.status_display);
+  });
+  source.onerror = () => {
+    source.close();
+    startPolling();
+  };
+} else {
+  startPolling();
+}
+
+function startPolling() {
+  setInterval(async () => {
+    try {
+      const res = await fetch(STATUS_URL);
+      const data = await res.json();
+      applyStatus(data.status, data.status_display);
+    } catch (e) { /* silent retry next tick */ }
+  }, 4000);
+}
+</script>
+{% endblock %}

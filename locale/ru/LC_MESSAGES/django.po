@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Restaurant Menu"
+msgstr "Меню ресторана"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Our Menu"
+msgstr "Наше меню"
+
+msgid "No table detected. Please scan the QR code on your table to start an order."
+msgstr "Столик не определён. Отсканируйте QR-код на вашем столике, чтобы начать заказ."
+
+msgid "items"
+msgstr "позиций"
+
+msgid "Proceed to checkout"
+msgstr "Оформить заказ"
+
+msgid "Checkout"
+msgstr "Оформление заказа"
+
+msgid "Confirm your order"
+msgstr "Подтвердите заказ"
+
+msgid "We need a quick live photo and your location to confirm you're dining in — this only takes a second."
+msgstr "Нам нужно живое фото и ваше местоположение, чтобы подтвердить, что вы находитесь в ресторане — это займёт пару секунд."
+
+msgid "Your items"
+msgstr "Ваш заказ"
+
+msgid "Total"
+msgstr "Итого"
+
+msgid "Take live photo"
+msgstr "Сделать живое фото"
+
+msgid "Capture"
+msgstr "Снять"
+
+msgid "Retake"
+msgstr "Переснять"
+
+msgid "Photo must be taken right now, from inside the restaurant."
+msgstr "Фото должно быть сделано прямо сейчас, внутри ресторана."
+
+msgid "Requesting your location…"
+msgstr "Запрашиваем ваше местоположение…"
+
+msgid "Location confirmed."
+msgstr "Местоположение подтверждено."
+
+msgid "Location access denied. Please enable it to place your order."
+msgstr "Доступ к геолокации запрещён. Разрешите его, чтобы оформить заказ."
+
+msgid "Location is not supported on this device."
+msgstr "Геолокация не поддерживается на этом устройстве."
+
+msgid "Camera access denied or unavailable. Please allow camera permission."
+msgstr "Доступ к камере запрещён или недоступен. Разрешите доступ к камере."
+
+msgid "Place order"
+msgstr "Оформить заказ"
+
+msgid "Your cart is empty."
+msgstr "Ваша корзина пуста."
+
+msgid "Back to menu"
+msgstr "Вернуться в меню"
+
+msgid "Order status"
+msgstr "Статус заказа"
+
+msgid "Thank you!"
+msgstr "Спасибо!"
+
+msgid "Pending"
+msgstr "В ожидании"
+
+msgid "Accepted"
+msgstr "Принят"
+
+msgid "In Kitchen"
+msgstr "На кухне"
+
+msgid "Ready"
+msgstr "Готов"
+
+msgid "Delivered"
+msgstr "Доставлен"
+
+msgid "Cancelled"
+msgstr "Отменён"
+
+msgid "Order items"
+msgstr "Позиции заказа"
+
+msgid "Toggle dark mode"
+msgstr "Переключить тёмную тему"
+
+msgid "Table"
+msgstr "Столик"
+
+msgid "Admin registration"
+msgstr "Регистрация администратора"
+
+msgid "Create admin account"
+msgstr "Создать аккаунт администратора"
+
+msgid "After registering, you'll verify your phone number via Telegram before you can log in."
+msgstr "После регистрации вам нужно будет подтвердить номер телефона через Telegram, прежде чем войти."
+
+msgid "Continue to Telegram verification"
+msgstr "Перейти к подтверждению через Telegram"
+
+msgid "Already verified?"
+msgstr "Уже подтвердили?"
+
+msgid "Log in"
+msgstr "Войти"
+
+msgid "Verify via Telegram"
+msgstr "Подтверждение через Telegram"
+
+msgid "One last step"
+msgstr "Последний шаг"
+
+msgid "Open Telegram and confirm your phone number to activate your account."
+msgstr "Откройте Telegram и подтвердите номер телефона, чтобы активировать аккаунт."
+
+msgid "Open Telegram to verify"
+msgstr "Открыть Telegram для подтверждения"
+
+msgid "The link expires in 15 minutes."
+msgstr "Срок действия ссылки — 15 минут."
+
+msgid "Waiting for confirmation…"
+msgstr "Ожидание подтверждения…"
+
+msgid "No pending verification found. Please register again."
+msgstr "Ожидающих подтверждений не найдено. Зарегистрируйтесь снова."
+
+msgid "Back to registration"
+msgstr "Вернуться к регистрации"
+
+msgid "Verified! Redirecting to login…"
+msgstr "Подтверждено! Перенаправление на страницу входа…"
+
+msgid "Verification link expired. Please register again."
+msgstr "Срок действия ссылки истёк. Зарегистрируйтесь снова."
+
+msgid "Admin login"
+msgstr "Вход для администратора"
+
+msgid "New here?"
+msgstr "Впервые здесь?"
+
+msgid "Create an admin account"
+msgstr "Создать аккаунт администратора"
+
+msgid "Admin Dashboard"
+msgstr "Панель администратора"
+
+msgid "Live orders"
+msgstr "Активные заказы"
+
+msgid "Completed today:"
+msgstr "Выполнено сегодня:"
+
+msgid "Sound on"
+msgstr "Звук включён"
+
+msgid "Log out"
+msgstr "Выйти"
+
+msgid "No active orders right now."
+msgstr "Сейчас нет активных заказов."
+
+msgid "Accept"
+msgstr "Принять"
+
+msgid "Completed"
+msgstr "Завершён"
+
+msgid "Cancel"
+msgstr "Отменить"
+
+msgid "Geo-verified"
+msgstr "Геолокация подтверждена"
+
+msgid "NOT verified"
+msgstr "НЕ подтверждена"
+
+msgid "m from venue"
+msgstr "м от заведения"
+
+msgid "Items"
+msgstr "Позиции"
+
+msgid "Verification photo"
+msgstr "Фото подтверждения"
+
+msgid "Powered by Django"
+msgstr "Работает на Django"

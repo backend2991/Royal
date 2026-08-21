@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Verify via Telegram" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center">
+  <h1 class="text-2xl font-bold mb-2">{% trans "One last step" %}</h1>
+
+  {% if token %}
+    <p class="text-gray-500 dark:text-gray-400 mb-6">
+      {% trans "Open Telegram and confirm your phone number to activate your account." %}
+    </p>
+
+    <a href="{{ deep_link }}" target="_blank"
+       class="inline-flex items-center gap-2 bg-[#229ED9] text-white font-semibold px-6 py-3 rounded-xl mb-4">
+      ✈️ {% trans "Open Telegram to verify" %}
+    </a>
+
+    <p class="text-xs text-gray-400 mb-8">{% trans "The link expires in 15 minutes." %}</p>
+
+    <div id="waiting-indicator" class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+      <span class="w-2 h-2 rounded-full bg-brand-600 pulse-dot"></span>
+      {% trans "Waiting for confirmation…" %}
+    </div>
+  {% else %}
+    <p class="text-red-600">{% trans "No pending verification found. Please register again." %}</p>
+    <a href="{% url 'accounts:register' %}" class="text-brand-600 underline">{% trans "Back to registration" %}</a>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if token %}
+<script>
+const STATUS_URL = "{% url 'accounts:activation_status_json' token.token %}";
+const LOGIN_URL = "{% url 'accounts:login' %}";
+
+const poll = setInterval(async () => {
+  try {
+    const res = await fetch(STATUS_URL);
+    const data = await res.json();
+    if (data.activated) {
+      clearInterval(poll);
+      document.getElementById("waiting-indicator").innerHTML =
+        "✅ {% trans 'Verified! Redirecting to login…' %}";
+      setTimeout(() => { window.location.href = LOGIN_URL; }, 1500);
+    } else if (data.expired) {
+      clearInterval(poll);
+      document.getElementById("waiting-indicator").textContent =
+        "{% trans 'Verification link expired. Please register again.' %}";
+    }
+  } catch (e) { /* retry next tick */ }
+}, 3000);
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Admin Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+  
+  <!-- Header Card -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+    <div class="flex items-center gap-4">
+      <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 rounded-xl">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          {% trans "Live Orders" %}
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+            <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            {% trans "Live" %}
+          </span>
+        </h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+          {% trans "Completed today:" %} <span id="completed-count" class="font-bold text-gray-800 dark:text-gray-200">{{ completed_today|default:0 }}</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <button id="sound-toggle" type="button"
+              class="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+        🔔 <span>{% trans "Sound on" %}</span>
+      </button>
+      <a href="{% url 'accounts:logout' %}" 
+         class="text-xs font-semibold px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 hover:bg-red-100 transition">
+        {% trans "Log out" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Active Orders Grid -->
+  <div id="orders-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div id="empty-state" class="col-span-full py-20 text-center bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+      <p class="text-gray-400 text-base font-medium">{% trans "No active orders right now." %}</p>
+    </div>
+  </div>
+
+</div>
+
+<audio id="new-order-sound" preload="auto">
+  <source src="{% static 'audio/new_order.mp3' %}" type="audio/mpeg">
+</audio>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.DASHBOARD_CONFIG = {
+    feedUrl: "{% url 'dashboard:orders_feed_json' %}",
+    statusUrlTemplate: "{% url 'dashboard:update_order_status' 0 %}".replace('0', '__ID__'),
+    labels: {
+      accept: "{% trans 'Accept' %}",
+      inKitchen: "{% trans 'In Kitchen' %}",
+      ready: "{% trans 'Ready' %}",
+      completed: "{% trans 'Completed' %}",
+      cancel: "{% trans 'Cancel' %}",
+      table: "{% trans 'Table' %}",
+      verified: "{% trans 'Geo-verified' %}",
+      notVerified: "{% trans 'NOT verified' %}",
+      distance: "{% trans 'm from venue' %}",
+      items: "{% trans 'Items' %}",
+      total: "{% trans 'Total' %}",
+      photo: "{% trans 'Verification photo' %}",
+    }
+  };
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>{% block title %}{% trans "Restaurant Menu" %}{% endblock %}</title>
+
+<!-- Set theme before paint to avoid a flash of the wrong theme -->
+<script>
+  (function () {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  })();
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          brand: { 50:'#fff7ed',100:'#ffedd5',500:'#f97316',600:'#ea580c',700:'#c2410c' }
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
+
+<nav class="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-700">
+  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="{% url 'menu:menu' %}" class="font-bold text-lg text-brand-600 dark:text-brand-500">🍽️ {% trans "Restoran" %}</a>
+
+    <div class="flex items-center gap-2">
+      {% if current_table_number %}
+        <span class="hidden sm:inline-block text-xs px-3 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-700/20 dark:text-brand-500 font-medium">
+          {% blocktrans with n=current_table_number %}Table {{ n }}{% endblocktrans %}
+        </span>
+      {% endif %}
+
+      <!-- Language switcher -->
+      <form action="{% url 'set_language' %}" method="post" class="inline">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.path }}">
+        <select name="language" onchange="this.form.submit()"
+                class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 py-1.5 pl-2 pr-6">
+          {% get_current_language as CURRENT_LANGUAGE %}
+          {% get_available_languages as LANGUAGES %}
+          {% for code, name in LANGUAGES %}
+            <option value="{{ code }}" {% if code == CURRENT_LANGUAGE %}selected{% endif %}>
+              {% if code == 'en' %}🇬🇧 EN{% elif code == 'ru' %}🇷🇺 RU{% else %}🇺🇿 UZ{% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+
+      <!-- Theme toggle -->
+      <button id="theme-toggle" type="button"
+              class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+              aria-label="{% trans 'Toggle dark mode' %}">
+        <svg id="icon-sun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.02 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg id="icon-moon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6">
+  {% if messages %}
+    <div class="space-y-2 mb-4">
+      {% for message in messages %}
+        <div class="rounded-lg px-4 py-3 text-sm {% if message.tags == 'error' %}bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300{% else %}bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="text-center text-xs text-gray-400 py-6">
+  {% trans "Powered by Django" %} · {% now "Y" %}
+</footer>
+
+<script src="{% static 'js/theme.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

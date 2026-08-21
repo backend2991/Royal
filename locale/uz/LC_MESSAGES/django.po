@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uz\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Restaurant Menu"
+msgstr "Restoran menyusi"
+
+msgid "Menu"
+msgstr "Menyu"
+
+msgid "Our Menu"
+msgstr "Bizning menyu"
+
+msgid "No table detected. Please scan the QR code on your table to start an order."
+msgstr "Stol aniqlanmadi. Buyurtma berish uchun stolingizdagi QR-kodni skanerlang."
+
+msgid "items"
+msgstr "ta mahsulot"
+
+msgid "Proceed to checkout"
+msgstr "Buyurtmani rasmiylashtirish"
+
+msgid "Checkout"
+msgstr "Buyurtmani rasmiylashtirish"
+
+msgid "Confirm your order"
+msgstr "Buyurtmangizni tasdiqlang"
+
+msgid "We need a quick live photo and your location to confirm you're dining in — this only takes a second."
+msgstr "Restoranda ekanligingizni tasdiqlash uchun jonli surat va joylashuvingiz kerak — bu bir necha soniya vaqt oladi."
+
+msgid "Your items"
+msgstr "Buyurtmangiz"
+
+msgid "Total"
+msgstr "Jami"
+
+msgid "Take live photo"
+msgstr "Jonli surat olish"
+
+msgid "Capture"
+msgstr "Suratga olish"
+
+msgid "Retake"
+msgstr "Qayta suratga olish"
+
+msgid "Photo must be taken right now, from inside the restaurant."
+msgstr "Surat hozir, restoran ichida olinishi kerak."
+
+msgid "Requesting your location…"
+msgstr "Joylashuvingiz so'ralmoqda…"
+
+msgid "Location confirmed."
+msgstr "Joylashuv tasdiqlandi."
+
+msgid "Location access denied. Please enable it to place your order."
+msgstr "Joylashuvga ruxsat berilmadi. Buyurtma berish uchun uni yoqing."
+
+msgid "Location is not supported on this device."
+msgstr "Bu qurilmada joylashuv xizmati qo'llab-quvvatlanmaydi."
+
+msgid "Camera access denied or unavailable. Please allow camera permission."
+msgstr "Kameraga ruxsat berilmadi yoki mavjud emas. Kamera uchun ruxsat bering."
+
+msgid "Place order"
+msgstr "Buyurtma berish"
+
+msgid "Your cart is empty."
+msgstr "Savatingiz bo'sh."
+
+msgid "Back to menu"
+msgstr "Menyuga qaytish"
+
+msgid "Order status"
+msgstr "Buyurtma holati"
+
+msgid "Thank you!"
+msgstr "Rahmat!"
+
+msgid "Pending"
+msgstr "Kutilmoqda"
+
+msgid "Accepted"
+msgstr "Qabul qilindi"
+
+msgid "In Kitchen"
+msgstr "Oshxonada"
+
+msgid "Ready"
+msgstr "Tayyor"
+
+msgid "Delivered"
+msgstr "Yetkazildi"
+
+msgid "Cancelled"
+msgstr "Bekor qilindi"
+
+msgid "Order items"
+msgstr "Buyurtma tarkibi"
+
+msgid "Toggle dark mode"
+msgstr "Qorong'i rejimni almashtirish"
+
+msgid "Table"
+msgstr "Stol"
+
+msgid "Admin registration"
+msgstr "Administrator ro'yxatdan o'tishi"
+
+msgid "Create admin account"
+msgstr "Administrator hisobini yaratish"
+
+msgid "After registering, you'll verify your phone number via Telegram before you can log in."
+msgstr "Ro'yxatdan o'tgach, tizimga kirishdan oldin telefon raqamingizni Telegram orqali tasdiqlashingiz kerak."
+
+msgid "Continue to Telegram verification"
+msgstr "Telegram orqali tasdiqlashga o'tish"
+
+msgid "Already verified?"
+msgstr "Allaqachon tasdiqlangan bo'lsangiz?"
+
+msgid "Log in"
+msgstr "Kirish"
+
+msgid "Verify via Telegram"
+msgstr "Telegram orqali tasdiqlash"
+
+msgid "One last step"
+msgstr "Oxirgi qadam"
+
+msgid "Open Telegram and confirm your phone number to activate your account."
+msgstr "Hisobingizni faollashtirish uchun Telegramni oching va telefon raqamingizni tasdiqlang."
+
+msgid "Open Telegram to verify"
+msgstr "Tasdiqlash uchun Telegramni ochish"
+
+msgid "The link expires in 15 minutes."
+msgstr "Havola 15 daqiqadan so'ng amal qilmay qoladi."
+
+msgid "Waiting for confirmation…"
+msgstr "Tasdiqlash kutilmoqda…"
+
+msgid "No pending verification found. Please register again."
+msgstr "Kutilayotgan tasdiqlash topilmadi. Qayta ro'yxatdan o'ting."
+
+msgid "Back to registration"
+msgstr "Ro'yxatdan o'tishga qaytish"
+
+msgid "Verified! Redirecting to login…"
+msgstr "Tasdiqlandi! Kirish sahifasiga yo'naltirilmoqda…"
+
+msgid "Verification link expired. Please register again."
+msgstr "Tasdiqlash havolasi muddati o'tgan. Qayta ro'yxatdan o'ting."
+
+msgid "Admin login"
+msgstr "Administrator kirishi"
+
+msgid "New here?"
+msgstr "Birinchi marta kirdingizmi?"
+
+msgid "Create an admin account"
+msgstr "Administrator hisobini yaratish"
+
+msgid "Admin Dashboard"
+msgstr "Administrator paneli"
+
+msgid "Live orders"
+msgstr "Faol buyurtmalar"
+
+msgid "Completed today:"
+msgstr "Bugun bajarildi:"
+
+msgid "Sound on"
+msgstr "Ovoz yoqilgan"
+
+msgid "Log out"
+msgstr "Chiqish"
+
+msgid "No active orders right now."
+msgstr "Hozircha faol buyurtmalar yo'q."
+
+msgid "Accept"
+msgstr "Qabul qilish"
+
+msgid "Completed"
+msgstr "Bajarildi"
+
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+msgid "Geo-verified"
+msgstr "Joylashuv tasdiqlangan"
+
+msgid "NOT verified"
+msgstr "Tasdiqlanmagan"
+
+msgid "m from venue"
+msgstr "m masofada"
+
+msgid "Items"
+msgstr "Mahsulotlar"
+
+msgid "Verification photo"
+msgstr "Tasdiqlash surati"
+
+msgid "Powered by Django"
+msgstr "Django asosida ishlaydi"

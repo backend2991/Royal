@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load i18n menu_extras %}
+{% block title %}{% trans "Menu" %}{% endblock %}
+
+{% block content %}
+{% if not table_number %}
+  <div class="rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 p-4 mb-6 text-sm">
+    {% trans "No table detected. Please scan the QR code on your table to start an order." %}
+  </div>
+{% endif %}
+
+<h1 class="text-2xl font-bold mb-4">{% trans "Our Menu" %}</h1>
+
+<div class="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-4 px-4">
+  {% for category in categories %}
+    <a href="#cat-{{ category.id }}"
+       class="whitespace-nowrap px-4 py-2 rounded-full text-sm border border-gray-300 dark:border-gray-600 hover:bg-brand-50 dark:hover:bg-gray-800">
+      {{ category|loc_name:lang }}
+    </a>
+  {% endfor %}
+</div>
+
+{% for category in categories %}
+  <section id="cat-{{ category.id }}" class="mb-8 scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-3 text-brand-700 dark:text-brand-500">{{ category|loc_name:lang }}</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {% for item in category.items.all %}
+        {% if item.is_available %}
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden flex">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item|loc_name:lang }}" class="w-24 h-24 object-cover flex-shrink-0">
+          {% else %}
+            <div class="w-24 h-24 flex items-center justify-center bg-gray-100 dark:bg-gray-700 flex-shrink-0 text-2xl">🍲</div>
+          {% endif %}
+          <div class="p-3 flex flex-col justify-between flex-1 min-w-0">
+            <div>
+              <p class="font-medium truncate">{{ item|loc_name:lang }}</p>
+              {% if item.description %}
+                <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{{ item|loc_desc:lang }}</p>
+              {% endif %}
+            </div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-semibold text-brand-600 dark:text-brand-500">{{ item.price }} UZS</span>
+              <div class="flex items-center gap-2 bg-gray-100/80 dark:bg-gray-700/50 p-0.5 rounded-full">
+                <button type="button" class="qty-btn w-8 h-8 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center font-bold transition-all duration-150" data-action="dec" data-id="{{ item.id }}">−</button>
+                <span class="qty-display w-6 text-center text-sm font-semibold" data-id="{{ item.id }}">0</span>
+                <button type="button" class="qty-btn w-8 h-8 rounded-full bg-brand-600 text-white shadow-sm hover:bg-brand-700 flex items-center justify-center font-bold transition-all duration-150" data-action="inc" data-id="{{ item.id }}"
+                        data-name="{{ item|loc_name:lang }}" data-price="{{ item.price }}">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+{% endfor %}
+
+<!-- Sticky cart bar -->
+<div id="cart-bar" class="hidden fixed bottom-0 left-0 right-0 z-30 bg-brand-600 text-white shadow-lg">
+  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <span id="cart-summary" class="text-sm font-medium">0 {% trans "items" %} · 0 UZS</span>
+    <a href="{% url 'orders:checkout' %}{% if table_number %}?table={{ table_number }}{% endif %}"
+       class="bg-white text-brand-700 font-semibold px-4 py-2 rounded-lg text-sm">
+      {% trans "Proceed to checkout" %} →
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Cart is kept in localStorage (per-browser, no login) as {itemId: {qty, name, price}}.
+// The checkout page reads this same object to build the hidden cart_json field.
+const CART_KEY = "restaurant_cart";
+
+function loadCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+function renderCart() {
+  const cart = loadCart();
+  let count = 0, total = 0;
+  document.querySelectorAll(".qty-display").forEach(el => {
+    const id = el.dataset.id;
+    const qty = cart[id] ? cart[id].qty : 0;
+    el.textContent = qty;
+    const decBtn = el.previousElementSibling;
+    if (qty > 0) {
+      el.classList.remove("hidden");
+      if (decBtn && decBtn.dataset.action === "dec") {
+        decBtn.classList.remove("hidden");
+      }
+    } else {
+      el.classList.add("hidden");
+      if (decBtn && decBtn.dataset.action === "dec") {
+        decBtn.classList.add("hidden");
+      }
+    }
+  });
+  Object.values(cart).forEach(entry => { count += entry.qty; total += entry.qty * parseFloat(entry.price); });
+
+  const bar = document.getElementById("cart-bar");
+  const summary = document.getElementById("cart-summary");
+  if (count > 0) {
+    bar.classList.remove("hidden");
+    summary.textContent = `${count} {% trans "items" %} · ${total.toLocaleString()} UZS`;
+  } else {
+    bar.classList.add("hidden");
+  }
+}
+
+document.querySelectorAll(".qty-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const cart = loadCart();
+    const id = btn.dataset.id;
+    const existing = cart[id] || { qty: 0, name: btn.dataset.name, price: btn.dataset.price };
+    if (btn.dataset.action === "inc") {
+      existing.qty += 1;
+      existing.name = btn.dataset.name || existing.name;
+      existing.price = btn.dataset.price || existing.price;
+    } else {
+      existing.qty = Math.max(0, existing.qty - 1);
+    }
+    if (existing.qty === 0) { delete cart[id]; } else { cart[id] = existing; }
+    saveCart(cart);
+    renderCart();
+  });
+});
+
+renderCart();
+</script>
+{% endblock %}

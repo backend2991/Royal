@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Checkout" %}{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-1">{% trans "Confirm your order" %}</h1>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+  {% trans "We need a quick live photo and your location to confirm you're dining in — this only takes a second." %}
+</p>
+
+<!-- Form validation errors summary block -->
+{% if form.errors %}
+  <div class="rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 p-4 mb-6 text-sm text-red-700 dark:text-red-300">
+    <p class="font-bold mb-2">⚠️ {% trans "Please fix the following errors:" %}</p>
+    <ul class="list-disc pl-5 space-y-1">
+      {% for field, errors in form.errors.items %}
+        <li><strong>{{ field|title }}:</strong> {{ errors|join:", " }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<!-- Cart summary -->
+<div id="order-summary" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 mb-6">
+  <h2 class="font-semibold mb-2">{% trans "Your items" %}</h2>
+  <ul id="order-summary-list" class="text-sm divide-y divide-gray-100 dark:divide-gray-700"></ul>
+  <div class="flex justify-between mt-3 font-semibold">
+    <span>{% trans "Total" %}</span>
+    <span id="order-summary-total">0 UZS</span>
+  </div>
+</div>
+
+<form id="order-form" method="post" enctype="multipart/form-data" class="space-y-5">
+  {% csrf_token %}
+
+  <!-- Full Name -->
+  <div>
+    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300" for="{{ form.full_name.id_for_label }}">
+      {{ form.full_name.label }}
+    </label>
+    {{ form.full_name }}
+    {% if form.full_name.errors %}
+      <p class="text-xs text-red-600 mt-1">{{ form.full_name.errors|striptags }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Phone Number -->
+  <div>
+    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300" for="{{ form.phone_number.id_for_label }}">
+      {{ form.phone_number.label }}
+    </label>
+    {{ form.phone_number }}
+    {% if form.phone_number.errors %}
+      <p class="text-xs text-red-600 mt-1">{{ form.phone_number.errors|striptags }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Special instructions / Notes -->
+  <div>
+    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300" for="{{ form.notes.id_for_label }}">
+      {{ form.notes.label }}
+    </label>
+    {{ form.notes }}
+    {% if form.notes.errors %}
+      <p class="text-xs text-red-600 mt-1">{{ form.notes.errors|striptags }}</p>
+    {% endif %}
+  </div>
+
+  {% if form.non_field_errors %}
+    <div class="rounded-lg bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-3 text-sm">
+      {{ form.non_field_errors|striptags }}
+    </div>
+  {% endif %}
+
+  <!-- Live camera capture -->
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-4 text-center">
+    <video id="camera-preview" class="w-full rounded-lg mb-3 hidden" autoplay playsinline></video>
+    <canvas id="camera-canvas" class="hidden"></canvas>
+    <img id="captured-preview" class="w-full rounded-lg mb-3 hidden" alt="{% trans 'Captured photo' %}">
+
+    <button type="button" id="start-camera-btn" class="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+      📷 {% trans "Take live photo" %}
+    </button>
+    <button type="button" id="capture-btn" class="hidden bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+      {% trans "Capture" %}
+    </button>
+    <button type="button" id="retake-btn" class="hidden text-sm text-brand-600 underline mt-2">
+      {% trans "Retake" %}
+    </button>
+    <p id="camera-hint" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+      {% trans "Photo must be taken right now, from inside the restaurant." %}
+    </p>
+    {% if form.verification_photo.errors %}
+      <p class="text-xs text-red-600 mt-2 font-medium">{{ form.verification_photo.errors|striptags }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Geolocation & Interactive Map Section -->
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 space-y-3">
+    <div class="flex items-center justify-between">
+      <p id="geo-status" class="text-xs text-gray-500 dark:text-gray-400">
+        {% trans "Requesting your location…" %}
+      </p>
+      <button type="button" id="reget-geo-btn" class="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-200 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
+        📍 {% trans "Get Location" %}
+      </button>
+    </div>
+
+    <!-- Live Map Iframe Preview -->
+    <div id="map-wrapper" class="w-full h-48 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hidden">
+      <iframe id="geo-iframe" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
+    </div>
+  </div>
+
+  <!-- Hidden fields for geolocation, cart data & photo file -->
+  {{ form.browser_latitude }}
+  {{ form.browser_longitude }}
+  {{ form.table_number }}
+  {{ form.cart_json }}
+  {{ form.verification_photo }}
+
+  <button type="submit" id="submit-order-btn" disabled
+          class="w-full bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl">
+    {% trans "Place order" %}
+  </button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Global state
+let capturedFile = null;
+
+// ---- 1. Savatni sinxronlashtirish va ko'rsatish ----
+function syncCartData() {
+  // Key nomi brauzer localStorageda "cart" yoki "restaurant_cart" bo'lishi mumkinligini tekshiramiz
+  const rawCart = localStorage.getItem("restaurant_cart") || localStorage.getItem("cart") || "{}";
+  const cart = JSON.parse(rawCart);
+  const items = [];
+  let total = 0;
+
+  const list = document.getElementById("order-summary-list");
+  if (list) list.innerHTML = "";
+
+  Object.entries(cart).forEach(([id, entry]) => {
+    let price = typeof entry.price === "number" ? entry.price : parseFloat(entry.price);
+    if (isNaN(price)) {
+      price = parseFloat(String(entry.price).replace(",", ".").replace(/[^0-9.]/g, '')) || 0;
+    }
+
+    const qty = parseInt(entry.qty, 10) || 1;
+    const itemTotal = qty * price;
+    total += itemTotal;
+
+    items.push({ id: parseInt(id, 10), qty: qty, notes: entry.notes || "" });
+
+    if (list) {
+      const li = document.createElement("li");
+      li.className = "flex justify-between py-1.5";
+      li.innerHTML = `<span>${qty}× ${entry.name}</span><span>${Math.round(itemTotal).toLocaleString()} UZS</span>`;
+      list.appendChild(li);
+    }
+  });
+
+  const totalElem = document.getElementById("order-summary-total");
+  if (totalElem) totalElem.textContent = Math.round(total).toLocaleString() + " UZS";
+
+  const cartInput = document.getElementById("id_cart_json");
+  if (cartInput) {
+    cartInput.value = JSON.stringify(items);
+  }
+
+  return items;
+}
+
+// Sahifa yuklanganda ishga tushadi
+(function initCart() {
+  const items = syncCartData();
+  if (items.length === 0) {
+    const submitBtn = document.getElementById("submit-order-btn");
+    if (submitBtn) {
+      submitBtn.insertAdjacentHTML(
+        "beforebegin",
+        `<p class="text-sm text-red-600 mb-3">{% trans "Your cart is empty." %} <a href="{% url 'menu:menu' %}" class="underline">{% trans "Back to menu" %}</a></p>`
+      );
+    }
+  }
+})();
+
+// ---- 2. Geolocation logic ----
+function updateMapIframe(lat, lon) {
+  const mapWrapper = document.getElementById("map-wrapper");
+  const iframe = document.getElementById("geo-iframe");
+  
+  const bbox = `${lon - 0.002},${lat - 0.002},${lon + 0.002},${lat + 0.002}`;
+  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+  mapWrapper.classList.remove("hidden");
+}
+
+function requestGeolocation() {
+  const status = document.getElementById("geo-status");
+  status.textContent = "{% trans 'Requesting your location…' %}";
+
+  if (!navigator.geolocation) {
+    status.textContent = "{% trans 'Location is not supported on this device.' %}";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      document.getElementById("id_browser_latitude").value = lat;
+      document.getElementById("id_browser_longitude").value = lon;
+      
+      status.textContent = "{% trans 'Location confirmed.' %} ✅";
+      updateMapIframe(lat, lon);
+      checkReadyToSubmit();
+    },
+    (err) => {
+      status.textContent = "{% trans 'Location access denied. Please enable it to place your order.' %}";
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+document.getElementById("reget-geo-btn").addEventListener("click", requestGeolocation);
+requestGeolocation();
+
+// ---- 3. Camera capture logic ----
+let stream = null;
+const video = document.getElementById("camera-preview");
+const canvas = document.getElementById("camera-canvas");
+const capturedImg = document.getElementById("captured-preview");
+const fileInput = document.getElementById("id_verification_photo");
+
+document.getElementById("start-camera-btn").addEventListener("click", async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    video.srcObject = stream;
+    video.classList.remove("hidden");
+    document.getElementById("start-camera-btn").classList.add("hidden");
+    document.getElementById("capture-btn").classList.remove("hidden");
+  } catch (e) {
+    document.getElementById("camera-hint").textContent =
+      "{% trans 'Camera access denied or unavailable. Please allow camera permission.' %}";
+  }
+});
+
+document.getElementById("capture-btn").addEventListener("click", () => {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+  
+  canvas.toBlob((blob) => {
+    capturedFile = new File([blob], `capture_${Date.now()}.jpg`, { type: "image/jpeg" });
+    
+    const dt = new DataTransfer();
+    dt.items.add(capturedFile);
+    fileInput.files = dt.files;
+
+    capturedImg.src = URL.createObjectURL(blob);
+    capturedImg.classList.remove("hidden");
+    video.classList.add("hidden");
+    document.getElementById("capture-btn").classList.add("hidden");
+    document.getElementById("retake-btn").classList.remove("hidden");
+
+    if (stream) stream.getTracks().forEach((t) => t.stop());
+    checkReadyToSubmit();
+  }, "image/jpeg", 0.9);
+});
+
+document.getElementById("retake-btn").addEventListener("click", () => {
+  capturedFile = null;
+  capturedImg.classList.add("hidden");
+  document.getElementById("retake-btn").classList.add("hidden");
+  document.getElementById("start-camera-btn").classList.remove("hidden");
+  fileInput.value = "";
+  checkReadyToSubmit();
+});
+
+function checkReadyToSubmit() {
+  const hasPhoto = (fileInput.files && fileInput.files.length > 0) || capturedFile !== null;
+  const hasGeo = document.getElementById("id_browser_latitude").value !== "";
+  document.getElementById("submit-order-btn").disabled = !(hasPhoto && hasGeo);
+}
+
+// ---- 4. Form Submit Handler ----
+document.getElementById("order-form").addEventListener("submit", function (e) {
+  // Submit paytida cart_json qayta tekshirilib inputga joylanadi
+  const items = syncCartData();
+  if (items.length === 0) {
+    e.preventDefault();
+    alert("{% trans 'Your cart is empty!' %}");
+    return false;
+  }
+
+  // Rasm inputini submit oldidan qayta tekshirish
+  if (capturedFile && (!fileInput.files || fileInput.files.length === 0)) {
+    const dt = new DataTransfer();
+    dt.items.add(capturedFile);
+    fileInput.files = dt.files;
+  }
+
+  // Buyurtma ketgach local storageni tozalash
+  localStorage.removeItem("restaurant_cart");
+  localStorage.removeItem("cart");
+});
+</script>
+{% endblock %}

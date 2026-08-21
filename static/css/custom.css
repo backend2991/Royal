@@ -1,0 +1,19 @@
+/* Small extras Tailwind's CDN build doesn't cover (no arbitrary plugin build step). */
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, .5); border-radius: 9999px; }
+
+.pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(1.15); }
+}
+
+.status-track-line {
+  background: linear-gradient(90deg, #f97316 var(--progress, 0%), #e5e7eb var(--progress, 0%));
+}
+.dark .status-track-line {
+  background: linear-gradient(90deg, #f97316 var(--progress, 0%), #374151 var(--progress, 0%));
+}
