@@ -70,7 +70,7 @@ class RestaurantTableAdmin(admin.ModelAdmin):
 
         # Domen / URL manzilini shakllantirish
         path = obj.qr_target_path()
-        target = f"http://127.0.0.1:8000{path}"  # Production'da o'zingizni domeningiz bilan almashtiring
+        target = f"https://royal-dyg5.onrender.com{path}"  # Production'da o'zingizni domeningiz bilan almashtiring
 
         params = urlencode({"size": "150x150", "data": target})
         img_src = f"https://api.qrserver.com/v1/create-qr-code/?{params}"
